@@ -1,0 +1,25 @@
+    
+    def remote = [:]
+    remote.name = 'HOST'
+    remote.host = '10.67.107.24'
+
+    node {
+
+    withCredentials([usernamePassword(credentialsId: 'wso2admin', passwordVariable: 'passWord', usernameVariable: 'userName')]) {
+
+    remote.user = userName
+    remote.password = passWord
+    remote.allowAnyHosts = true
+
+    stage('Remote BUILD IMAGE') {
+        sshCommand remote: remote, command: "rm -R ${PATH}; git clone ${GIT}"
+        sshCommand remote: remote, command: "docker build -t ${APPNAME}:latest -t ${APPNAME}:${VERSION} -f ${PATH}${DOCKERFILE} ${PATH}"
+    }
+    
+    }
+    stage('Remote PUSH IMAGE') {
+        sshCommand remote: remote, command: "docker push ${APPNAME}:latest"
+        sshCommand remote: remote, command: "docker push ${APPNAME}:${VERSION}"
+    }
+
+}

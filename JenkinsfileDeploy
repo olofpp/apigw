@@ -1,0 +1,19 @@
+    
+    def remote = [:]
+    remote.name = 'HOST'
+    remote.host = '10.67.107.24'
+    
+    node {
+        
+    withCredentials([usernamePassword(credentialsId: 'wso2admin', passwordVariable: 'passWord', usernameVariable: 'userName')]) {
+    
+    
+    remote.user = userName
+    remote.password = passWord
+    remote.allowAnyHosts = true
+    stage('Remote SSH') {
+        sshCommand remote: remote, command: "docker stack rm ${APPNAME}"
+        sshCommand remote: remote, command: "export PFXPWD=${params.PFXPWD} APPNAME=${APPNAME} IMAGE=${IMAGE} PFX=${PFX} ; docker stack deploy -c ${PATH}${APPNAME}.yml ${APPNAME}"
+    }
+}
+}

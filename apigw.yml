@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+
+  apigw:
+    image: ${IMAGE}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ././${PFX}:/app/${PFX}
+    networks:
+      - web-net
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${PFXPWD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/${PFX}
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:8443
+    deploy:
+      mode: replicated
+      replicas: 1
+
+networks:
+  web-net:
+    external: true
