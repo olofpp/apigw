@@ -18,6 +18,16 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:8443
     deploy:
+      labels:
+        - "traefik.http.routers.${APPNAME}.tls=true"
+        - "traefik.http.services.${APPNAME}.loadbalancer.server.port=8443"
+        - "traefik.enable=true"
+        - "traefik.http.routers.${APPNAME}.rule=Host(`heroapi.heroma.test`)"
+        - "traefik.http.routers.${APPNAME}.entrypoints=web"
+        - "traefik.http.routers.${APPNAME}.entrypoints=websecure"
+        - "traefik.http.services.${APPNAME}.loadBalancer.sticky.cookie=true"
+        - "traefik.http.services.${APPNAME}.loadBalancer.sticky.cookie.name=heroapigw_cookie"
+        - "traefik.http.services.${APPNAME}.loadbalancer.server.scheme=https"
       mode: replicated
       replicas: 1
 
