@@ -1,0 +1,4 @@
+JwtSettings:
+    Issuer: 'http://myidp.test/adfs/services/trust'
+    Audience: 'urn:microsoft:userinfo'
+    JwksUrl: 'https://myidp.test/adfs/discovery/keys'
