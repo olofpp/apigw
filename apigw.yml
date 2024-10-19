@@ -7,7 +7,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ../${PFX}:/app/${PFX}
-      - ../${APPSETTINGSYML}app/appsettings.yml
+      - ../${APPSETTINGSYML}:/app/appsettings.yml
     extra_hosts:
       - ${EXTRAHOSTS} idp.heroma.se:78.41.246.241
     networks:
