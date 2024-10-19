@@ -9,7 +9,7 @@ services:
       - ../${PFX}:/app/${PFX}
       - ../${APPSETTINGSYML}:/app/appsettings.yml
     extra_hosts:
-      - ${EXTRAHOSTS} idp.heroma.se:78.41.246.241
+      - ${EXTRAHOSTS}
     networks:
       - web-net
     environment:
