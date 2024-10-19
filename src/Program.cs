@@ -16,6 +16,11 @@ var configuration = new ConfigurationBuilder()
     .AddYamlFile("appsettings.yml", optional: true, reloadOnChange: true)
     .Build();
 
+using var stream = File.OpenRead("appsettings.yml");
+builder.Configuration
+    .AddYamlFile("appsettings.yml", optional: true)
+.AddYamlStream(stream);
+
 JsonWebKey jsonResponse = await new HttpConfiguration(configuration).ReturnMessage();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
