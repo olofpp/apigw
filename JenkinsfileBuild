@@ -12,7 +12,7 @@
     remote.allowAnyHosts = true
 
     stage('Remote BUILD IMAGE') {
-        sshCommand remote: remote, command: "rm -R ${PATH}; git clone ${GIT}"
+        sshCommand remote: remote, command: "rm -R ${PATH}; git clone --branch ${VERSION} ${GIT}"
         sshCommand remote: remote, command: "docker build -t ${APPNAME}:latest -t ${APPNAME}:${VERSION} -f ${PATH}${DOCKERFILE} ${PATH}"
     }
     
