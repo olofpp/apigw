@@ -6,7 +6,7 @@ services:
     image: ${IMAGE}
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ././${PFX}:/app/${PFX}
+      - ../${PFX}:/app/${PFX}
     networks:
       - web-net
     environment:
