@@ -3,7 +3,7 @@ version: "3.5"
 services:
 
   apigw:
-    image: ${IMAGE}
+    image: ${IMAGE}:${VERSION}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ../${PFX}:/app/${PFX}
