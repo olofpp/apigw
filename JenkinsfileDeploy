@@ -1,7 +1,7 @@
     
     def remote = [:]
     remote.name = 'HOST'
-    remote.host = '10.67.107.24'
+    remote.host = 'sshserver'
     
     node {
         
