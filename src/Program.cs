@@ -21,13 +21,16 @@ var configuration = new ConfigurationBuilder()
 using var stream = File.OpenRead("./cfg/appsettings.yml");
 builder.Configuration
     .AddYamlFile("./cfg/appsettings.yml", optional: true)
-.AddYamlStream(stream);
+    .AddYamlStream(stream);
 
 JsonWebKey jsonResponse = await new HttpConfiguration(configuration).ReturnMessage();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.Authority = configuration["JwtSettings:Authority"];
+        options.Audience = configuration["JwtSettings:Audience"];
+        options.RequireHttpsMetadata = false; // Allow HTTP metadata
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -38,14 +41,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = configuration["JwtSettings:Audience"],
             IssuerSigningKey = jsonResponse
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                // Handle the failure gracefully
+                context.NoResult();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "text/plain";
+                return context.Response.WriteAsync("Authentication failed.");
+            }
+        };
     });
 
 builder.Services.AddEndpointsApiExplorer();
 
-
-
-
-// Rate limit policys
+// Rate limit policies
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
     rateLimiterOptions.AddFixedWindowLimiter("rate-10", options =>
