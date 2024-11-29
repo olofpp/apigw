@@ -3,18 +3,18 @@ version: "3.5"
 services:
 
   apigw:
-    image: ${IMAGE}:${VERSION}
+    image: apigw:1
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ../${PFX}:/app/${PFX}
-      - ../${APPSETTINGSYML}:/app/appsettings.yml
+      - ./hero.pfx:/app/hero.pfx
+      - ./appsettingsapigw.yml:/app/appsettings.yml
     extra_hosts:
       - ${EXTRAHOSTS}
     networks:
       - web-net
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=${PFXPWD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/${PFX}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/hero.pfx
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:8443
     deploy:
@@ -28,6 +28,7 @@ services:
         - "traefik.http.services.${APPNAME}.loadBalancer.sticky.cookie=true"
         - "traefik.http.services.${APPNAME}.loadBalancer.sticky.cookie.name=${APPNAME}_cookie"
         - "traefik.http.services.${APPNAME}.loadbalancer.server.scheme=https"
+        - "traefik.http.routers.${APPNAME}.tls.certresolver=myresolver"
       mode: replicated
       replicas: 1
 

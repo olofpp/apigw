@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using GetJwks;
+using LettuceEncrypt;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +15,12 @@ builder.Services.AddTransient<IHttpConfiguration, HttpConfiguration>();
 var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
     //.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddYamlFile("appsettings.yml", optional: true, reloadOnChange: true)
+    .AddYamlFile("./cfg/appsettings.yml", optional: true, reloadOnChange: true)
     .Build();
 
-using var stream = File.OpenRead("appsettings.yml");
+using var stream = File.OpenRead("./cfg/appsettings.yml");
 builder.Configuration
-    .AddYamlFile("appsettings.yml", optional: true)
+    .AddYamlFile("./cfg/appsettings.yml", optional: true)
 .AddYamlStream(stream);
 
 JsonWebKey jsonResponse = await new HttpConfiguration(configuration).ReturnMessage();
@@ -39,6 +41,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddEndpointsApiExplorer();
+
 
 
 
@@ -77,6 +80,10 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
+builder.Services
+    .AddLettuceEncrypt()
+    .PersistDataToDirectory(new DirectoryInfo("/LettuceEncrypt/"), "VarInteEnNisse1337");
 
 var app = builder.Build();
 
